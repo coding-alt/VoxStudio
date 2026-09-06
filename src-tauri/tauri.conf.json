@@ -1,0 +1,56 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "VoxStudio",
+  "version": "1.0.0",
+  "identifier": "com.voxstudio",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "macOSPrivateApi": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "VoxStudio",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 1000,
+        "minHeight": 660,
+        "center": true,
+        "resizable": true,
+        "transparent": true,
+        "decorations": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "dragDropEnabled": false,
+        "windowEffects": {
+          "effects": ["hudWindow"],
+          "state": "active"
+        }
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://localhost:8000 http://127.0.0.1:8000 http://localhost:1420 ws://localhost:1421; media-src 'self' blob: data:; img-src 'self' data: blob: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["app", "dmg"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns"
+    ],
+    "copyright": "VoxStudio",
+    "category": "Productivity",
+    "shortDescription": "Apple Silicon 原生语音克隆工作台",
+    "longDescription": "基于 VoxCPMANE2 的本地语音合成与声音克隆工具，使用 Apple Neural Engine 加速。",
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
+  }
+}
