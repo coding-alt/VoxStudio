@@ -204,7 +204,13 @@ export function CloneVoiceModal({ open, onClose, onCreate, existingNames }: Prop
   }, [recording]);
 
   // ── 提交 ────────────────────────────────────────────────
-  const nameInvalid = name.length > 0 && !/^[A-Za-z0-9_-]+$/.test(name);
+  // 允许中英文与常见字符；仅禁止文件系统非法字符与控制字符（后端可能以 name 作目录名）。
+  const ILLEGAL_NAME = /[/\\:*?"<>|\u0000-\u001f\u007f]/;
+  const nameInvalid =
+    name.length > 0 &&
+    (ILLEGAL_NAME.test(name) || name.length > 40 || name !== name.trim());
+  const nameTooLong = name.length > 40;
+  const nameHasSpace = name.length > 0 && name !== name.trim();
   const nameTaken = existingNames.includes(name);
   const canSubmit = refPath !== "" && name.length > 0 && !nameInvalid && !nameTaken && !busy;
 
@@ -320,15 +326,23 @@ export function CloneVoiceModal({ open, onClose, onCreate, existingNames }: Prop
           <input
             className="input"
             value={name}
-            placeholder="例如 my_voice"
+            placeholder="例如 我的声音"
             onChange={(e) => setName(e.target.value)}
           />
           <div className="param-hint" style={{ color: nameInvalid || nameTaken ? "var(--danger)" : undefined }}>
-            {nameInvalid
-              ? "只能使用字母、数字、下划线和连字符"
-              : nameTaken
-                ? "该名称已存在"
-                : "作为音色的唯一标识，建议使用英文字母与下划线"}
+            {nameInvalid ? (
+              nameTooLong ? (
+                "名称不能超过 40 个字符"
+              ) : nameHasSpace ? (
+                "首尾不能包含空格"
+              ) : (
+                "不能包含 / \\ : * ? \" < > | 等字符"
+              )
+            ) : nameTaken ? (
+              "该名称已存在"
+            ) : (
+              "支持中英文，最长 40 字，将作为音色的唯一标识"
+            )}
           </div>
         </div>
 
@@ -364,5 +378,6 @@ export function CloneVoiceModal({ open, onClose, onCreate, existingNames }: Prop
 }
 
 function sanitizeName(s: string): string {
-  return s.replace(/[^A-Za-z0-9_-]/g, "_");
+  // 仅替换文件系统非法字符，保留中文等合法字符
+  return s.replace(/[/\\:*?"<>|\u0000-\u001f\u007f]/g, "_").trim();
 }
