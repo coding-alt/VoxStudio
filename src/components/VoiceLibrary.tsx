@@ -35,14 +35,13 @@ function VoiceCard({
 
   return (
     <div className={`voice-card ${selected ? "selected" : ""}`} onClick={onSelect}>
-      {custom && <span className="badge-custom">克隆</span>}
       <div className="voice-top">
         <div className="voice-avatar" style={{ background: meta.color }}>
           {meta.display.charAt(0).toUpperCase()}
         </div>
         <div className="voice-meta">
           <div className="voice-name">{meta.display}</div>
-          <div className="voice-tag">{meta.label}</div>
+          {!custom && <div className="voice-tag">{meta.label}</div>}
         </div>
         <div style={{ display: "flex", gap: 2 }}>
           <button
